@@ -6,7 +6,7 @@ function bs:__init()
 
 	self.handle = ffi.new'void*[1]'
 	local old_handle = self.handle[1]
-    C.init(self.handle)	
+    C.init_basler(self.handle)	
 	if(self.handle[1] == old_handle) then
 		print 'Unsuccessful init'
 	end

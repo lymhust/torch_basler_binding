@@ -10,14 +10,14 @@ using namespace std;
 
 extern "C" 
 {
-void init(void* handle[1]);
+void init_basler(void* handle[1]);
 bool IsGrabbing(void* handle[1]);	
 void RetrieveResult(void* handle[1], THByteTensor* frame);
 void terminate();
 }
 
 
-void init(void* handle[1])	   
+void init_basler(void* handle[1])	   
 {
 	// Before using any pylon methods, the pylon runtime must be initialized. 
     PylonInitialize();
