@@ -1,36 +1,27 @@
-torch-caffe-binding
+torch-basler-binding
 ===================
 
-A short binding to use Caffe as a module in Torch7. Has the same functionality as MATLAB bindings.
+A short binding to use basler industrial camera in torch7. Wrapper for pylon5.
 
-You have to have installed and built Caffe, then do this:
-
+Installation:
 ```bash
-CAFFE_DIR=/*path-to-caffe-root*/ luarocks install caffe
+BASLER_DIR=/*path-to-pylon5-root*/ luarocks make
 ```
-
-Forward and backward are supported:
+Example:
 
 ```lua
-require 'caffe'
+require 'basler'
+require 'image'
+torch.setdefaulttensortype('torch.FloatTensor')
 
-net = caffe.Net('deploy.prototxt', 'bvlc_alexnet.caffemodel', 'test')
-input = torch.FloatTensor(10,3,227,227)
-output = net:forward(input)
+local bs = basler.bs()
 
-gradOutput = torch.FloatTensor(10,1000,1,1)
-gradInput = net:backward(input, gradOutput)
+while (bs:isGrabbing()) do
+	sys.tic()
+	local frame = bs:retrieveResult()
+	frame = frame:permute(3,1,2)
+	frame = image.scale(frame, 1024, 640, 'simple')
+	win = image.display{win=win, image=frame}
+	print('FPS: '..1/sys.toc())
+end
 ```
-
-Use can also use it inside a network as nn.Module, for example:
-
-```lua
-require 'caffe'
-
-model = nn.Sequential()
-model:add(caffe.Net('deploy.prototxt', 'bvlc_alexnet.caffemodel', 'test'))
-model:add(nn.Linear(1000,1))
-```
-
-To load Caffe networks in Torch7 without having Caffe installed use this:
-https://github.com/szagoruyko/loadcaffe
